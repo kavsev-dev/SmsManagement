@@ -1,0 +1,52 @@
+@baseUrl = http://localhost:5080
+
+### Send with only "to" and "body" (as in the specification) -> default provider Mock
+POST {{baseUrl}}/messages
+Content-Type: application/json
+
+{
+  "to": "0501234567",
+  "body": "Hello, your schedule has been updated."
+}
+
+### Send Hebrew text via the Secondary provider
+POST {{baseUrl}}/messages
+Content-Type: application/json
+
+{
+  "to": "+972521234567",
+  "body": "שלום, לוח הזמנים שלך עודכן.",
+  "provider": "Secondary"
+}
+
+### Simulated provider failure (numbers ending in 0000) -> 201 with status Failed
+POST {{baseUrl}}/messages
+Content-Type: application/json
+
+{
+  "to": "0500000000",
+  "body": "This one fails at the provider.",
+  "provider": "Mock"
+}
+
+### Validation error -> 400 RFC 7807 problem details
+POST {{baseUrl}}/messages
+Content-Type: application/json
+
+{
+  "to": "12345",
+  "body": "",
+  "provider": "Twilio"
+}
+
+### List all messages (newest first)
+GET {{baseUrl}}/messages
+
+### List sent messages
+GET {{baseUrl}}/messages?status=Sent
+
+### Get one message (replace the id)
+GET {{baseUrl}}/messages/3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+### Health
+GET {{baseUrl}}/health
